@@ -3,273 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神秘魔法阵 - 时光之轮</title>
+    <title>极精密·时序魔法阵</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-color: #050508;
+            --magic-gold: rgba(255, 215, 100, 0.8);
+            --magic-cyan: rgba(0, 255, 255, 0.6);
+            --glow: 0 0 15px rgba(255, 215, 100, 0.4);
         }
 
-        body {
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
             overflow: hidden;
-            height: 100vh;
-            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: serif;
+        }
+
+        #magic-container {
+            position: relative;
+            width: 95vmin;
+            height: 95vmin;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .magic-circle-container {
-            position: relative;
-            width: 90vmin;
-            height: 90vmin;
-            max-width: 800px;
-            max-height: 800px;
-        }
-
-        .magic-circle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        svg {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, transparent 30%, rgba(0, 0, 0, 0.8) 70%);
+            filter: drop-shadow(0 0 8px rgba(255, 180, 0, 0.3));
         }
 
-        .magic-circle svg {
-            width: 100%;
-            height: 100%;
+        /* 旋转逻辑控制 */
+        .layer {
             transform-origin: center;
-            animation: rotate 60s linear infinite;
+            transition: transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44);
         }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .reverse {
+            animation-direction: reverse;
         }
 
-        .second-hand {
-            animation: secondRotate 60s linear infinite;
+        /* 装饰性文字 */
+        .runes {
+            font-size: 12px;
+            fill: var(--magic-gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        @keyframes secondRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .time-indicator {
+        /* 背景装饰 */
+        .ambient-glow {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #fff 0%, #ff6b6b 100%);
-            border-radius: 50%;
-            z-index: 10;
-            box-shadow: 0 0 20px #ff6b6b, 0 0 40px #ff6b6b;
-        }
-
-        .time-display {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 0 0 10px #ff6b6b;
-            z-index: 20;
-        }
-
-        .glow-effect {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
-        }
-
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(100, 60, 20, 0.2) 0%, transparent 70%);
             pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #fff;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        @media (max-width: 768px) {
-            .magic-circle-container {
-                width: 95vmin;
-                height: 95vmin;
-            }
-            
-            .time-display {
-                font-size: 18px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-    
-    <div class="time-display" id="timeDisplay">00:00:00</div>
-    
-    <div class="magic-circle-container">
-        <div class="glow-effect"></div>
-        <div class="magic-circle">
-            <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                <!-- 外层圆环 -->
-                <circle cx="200" cy="200" r="195" fill="none" stroke="url(#grad1)" stroke-width="2" opacity="0.8"/>
-                
-                <!-- 内层圆环 -->
-                <circle cx="200" cy="200" r="170" fill="none" stroke="url(#grad2)" stroke-width="1.5" opacity="0.6"/>
-                
-                <!-- 中心圆 -->
-                <circle cx="200" cy="200" r="20" fill="none" stroke="url(#grad3)" stroke-width="1" opacity="0.9"/>
-                
-                <!-- 主魔法阵线条 -->
-                <g class="second-hand">
-                    <!-- 12条主射线 -->
-                    <g stroke="url(#grad4)" stroke-width="1.5" opacity="0.7">
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(0 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(30 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(60 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(90 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(120 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(150 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(180 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(210 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(240 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(270 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(300 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="30" transform="rotate(330 200 200)"/>
-                    </g>
-                    
-                    <!-- 次级射线 -->
-                    <g stroke="url(#grad5)" stroke-width="1" opacity="0.5">
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(15 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(45 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(75 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(105 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(135 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(165 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(195 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(225 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(255 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(285 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(315 200 200)"/>
-                        <line x1="200" y1="200" x2="200" y2="50" transform="rotate(345 200 200)"/>
-                    </g>
-                    
-                    <!-- 复杂几何图案 -->
-                    <g fill="none" stroke="url(#grad6)" stroke-width="1" opacity="0.6">
-                        <!-- 六边形 -->
-                        <polygon points="200,120 234,140 234,180 200,200 166,180 166,140" transform="rotate(0 200 160)"/>
-                        <polygon points="200,120 234,140 234,180 200,200 166,180 166,140" transform="rotate(60 200 160)"/>
-                        <polygon points="200,120 234,140 234,180 200,200 166,180 166,140" transform="rotate(120 200 160)"/>
-                        
-                        <!-- 三角形 -->
-                        <polygon points="200,100 220,130 180,130" transform="rotate(0 200 115)"/>
-                        <polygon points="200,100 220,130 180,130" transform="rotate(120 200 115)"/>
-                        <polygon points="200,100 220,130 180,130" transform="rotate(240 200 115)"/>
-                    </g>
-                    
-                    <!-- 装饰性圆圈 -->
-                    <g fill="none" stroke="url(#grad7)" stroke-width="1" opacity="0.4">
-                        <circle cx="200" cy="200" r="80" transform="rotate(0 200 200)"/>
-                        <circle cx="200" cy="200" r="100" transform="rotate(30 200 200)"/>
-                        <circle cx="200" cy="200" r="120" transform="rotate(60 200 200)"/>
-                        <circle cx="200" cy="200" r="140" transform="rotate(90 200 200)"/>
-                        <circle cx="200" cy="200" r="160" transform="rotate(120 200 200)"/>
-                        <circle cx="200" cy="200" r="180" transform="rotate(150 200 200)"/>
-                    </g>
-                </g>
-                
-                <!-- 秒针 -->
-                <line x1="200" y1="200" x2="200" y2="50" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" class="second-hand"/>
-                
-                <!-- 中心点 -->
-                <circle cx="200" cy="200" r="5" fill="#ff6b6b" class="second-hand"/>
-            </svg>
-        </div>
+
+<div class="ambient-glow"></div>
+<div id="magic-container">
+    <svg id="magic-circle" viewBox="0 0 800 800">
+        <!-- 定义渐变和滤镜 -->
+        <defs>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffd764;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+
+        <!-- 基础圆环组 -->
+        <g id="layers-container">
+            <!-- 自动生成层级将注入此处 -->
+        </g>
+    </svg>
+</div>
+
+<script>
+    const container = document.getElementById('layers-container');
+
+    // 辅助函数：创建SVG元素
+    function createSVG(tag, attrs) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (let k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+    }
+
+    // 绘制多边形/星形
+    function getSteinerPoints(radius, sides, offset = 0) {
+        let points = [];
+        for (let i = 0; i < sides; i++) {
+            let angle = (i * 360 / sides + offset) * Math.PI / 180;
+            points.push(`${400 + radius * Math.cos(angle)},${400 + radius * Math.sin(angle)}`);
+        }
+        return points.join(' ');
+    }
+
+    // 初始化魔法阵结构
+    function initMagicCircle() {
+        // 1. 最外层：时钟刻度环
+        const outerRing = createSVG('g', { class: 'layer', id: 'layer-outer' });
+        outerRing.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 380, fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '2' }));
+        outerRing.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 370, fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '1', 'stroke-dasharray': '2,4' }));
         
-        <div class="time-indicator"></div>
-    </div>
-
-    <script>
-        // 创建星星背景
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            const starCount = 50;
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                starsContainer.appendChild(star);
-            }
+        // 添加刻度
+        for(let i=0; i<60; i++) {
+            let r1 = i % 5 === 0 ? 370 : 375;
+            let strokeW = i % 5 === 0 ? 2 : 0.5;
+            let angle = i * 6 * Math.PI / 180;
+            outerRing.appendChild(createSVG('line', {
+                x1: 400 + 380 * Math.cos(angle), y1: 400 + 380 * Math.sin(angle),
+                x2: 400 + r1 * Math.cos(angle), y2: 400 + r1 * Math.sin(angle),
+                stroke: 'var(--magic-gold)', 'stroke-width': strokeW
+            }));
         }
+        container.appendChild(outerRing);
 
-        // 更新时间显示
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            
-            document.getElementById('timeDisplay').textContent = `${hours}:${minutes}:${seconds}`;
+        // 2. 中层：几何共振层 (六角星与内接圆)
+        const midLayer = createSVG('g', { class: 'layer', id: 'layer-mid' });
+        midLayer.appendChild(createSVG('polygon', { 
+            points: getSteinerPoints(300, 6), fill: 'none', stroke: 'var(--magic-cyan)', 'stroke-width': '1' 
+        }));
+        midLayer.appendChild(createSVG('polygon', { 
+            points: getSteinerPoints(300, 6, 30), fill: 'none', stroke: 'var(--magic-cyan)', 'stroke-width': '1' 
+        }));
+        midLayer.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 260, fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '4', 'stroke-dasharray': '20,10,5,10' }));
+        container.appendChild(midLayer);
+
+        // 3. 符文层 (模拟文字)
+        const runeLayer = createSVG('g', { class: 'layer', id: 'layer-runes' });
+        const runeText = "ELPHEGOR • ASTAROTH • METATRON • LUCIFER • ADONAI • ELOHE • ZEBAOTH • ";
+        const pathId = "runePath";
+        runeLayer.appendChild(createSVG('path', { 
+            id: pathId, d: "M 400,180 A 220,220 0 1,1 399.9,180", fill: 'none'
+        }));
+        const textNode = createSVG('text', { class: 'runes' });
+        const textPath = createSVG('textPath', { 'href': '#' + pathId });
+        textPath.textContent = runeText.repeat(3);
+        textNode.appendChild(textPath);
+        runeLayer.appendChild(textNode);
+        container.appendChild(runeLayer);
+
+        // 4. 核心层：极其复杂的碎形
+        const coreLayer = createSVG('g', { class: 'layer', id: 'layer-core' });
+        for(let i=0; i<12; i++) {
+            coreLayer.appendChild(createSVG('ellipse', {
+                cx: 400, cy: 400, rx: 150, ry: 40, 
+                transform: `rotate(${i*30} 400 400)`,
+                fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '0.5'
+            }));
         }
+        coreLayer.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 50, fill: 'none', stroke: 'var(--magic-cyan)', 'stroke-width': '2' }));
+        coreLayer.appendChild(createSVG('polygon', { points: getSteinerPoints(50, 3), fill: 'var(--magic-gold)' }));
+        container.appendChild(coreLayer);
+    }
 
-        // 初始化
-        createStars();
-        updateTime();
-        setInterval(updateTime, 1000);
+    // 动画驱动：同步时间
+    function update() {
+        const now = new Date();
+        const ms = now.getMilliseconds();
+        const sec = now.getSeconds() + ms / 1000;
+        const min = now.getMinutes() + sec / 60;
+        const hr = now.getHours() + min / 60;
 
-        // 自定义渐变定义
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes secondRotate {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-            
-            @keyframes rotate {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
+        // 秒针角度 (每秒6度)
+        const secAngle = sec * 6;
+        
+        // 各层差异化旋转
+        // 最外层同步秒针
+        document.getElementById('layer-outer').style.transform = `rotate(${secAngle}deg)`;
+        
+        // 中层反向缓慢旋转
+        document.getElementById('layer-mid').style.transform = `rotate(${-secAngle * 0.5}deg)`;
+        
+        // 符文层顺向极慢旋转
+        document.getElementById('layer-runes').style.transform = `rotate(${min * 6}deg)`;
+        
+        // 核心层高频微动
+        document.getElementById('layer-core').style.transform = `rotate(${secAngle * 2}deg)`;
+
+        requestAnimationFrame(update);
+    }
+
+    initMagicCircle();
+    update();
+</script>
+
 </body>
-    </html>
+                </html>
