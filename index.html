@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiMo - 极致网页展示</title>
+    <title>AI 助手 - 下一代智能交互体验</title>
     <style>
         * {
             margin: 0;
@@ -12,65 +12,44 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
-            color: var(--light);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* 动态背景 */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .bg-animation::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
-            animation: rotate 30s linear infinite;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* 导航栏 */
-        .navbar {
+        /* 导航栏 - 玻璃拟态效果 */
+        nav {
             position: fixed;
             top: 0;
             width: 100%;
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
             z-index: 1000;
-            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
         }
 
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -79,10 +58,15 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px rgba(37, 99, 235, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8)); }
         }
 
         .nav-links {
@@ -92,10 +76,14 @@
         }
 
         .nav-links a {
-            color: var(--light);
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
             position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
         }
 
         .nav-links a::after {
@@ -105,89 +93,145 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--primary);
-            transition: width 0.3s;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
         }
 
         .nav-links a:hover::after {
             width: 100%;
         }
 
-        /* 移动端菜单按钮 */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--light);
-            font-size: 1.5rem;
-            cursor: pointer;
+        /* 主要内容区 */
+        main {
+            margin-top: 80px;
+            min-height: 100vh;
         }
 
-        /* 主容器 */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 100px 2rem 2rem;
-        }
-
-        /* 英雄区域 */
+        /* Hero 区域 - 动态渐变背景 */
         .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: gradientShift 10s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            50% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        }
+
+        .hero-content {
             text-align: center;
-            padding: 4rem 0;
-            animation: fadeInUp 1s ease-out;
+            z-index: 2;
+            padding: 2rem;
         }
 
         .hero h1 {
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-size: clamp(2.5rem, 5vw, 4rem);
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
+            animation: fadeInUp 1s ease;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .hero p {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto 2rem;
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
         }
 
         .cta-button {
             display: inline-block;
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem 2rem;
+            background: var(--primary-color);
             color: white;
             text-decoration: none;
             border-radius: 50px;
-            font-weight: bold;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.4s both;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
         }
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.6);
         }
 
-        /* 特性卡片 */
+        /* 浮动粒子效果 */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 功能展示区 */
         .features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin: 4rem 0;
+            margin-top: 3rem;
         }
 
         .feature-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            background: var(--bg-card);
             padding: 2rem;
-            transition: transform 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -199,276 +243,209 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            background: linear-gradient(135deg, transparent, rgba(37, 99, 235, 0.1));
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.2);
         }
 
         .feature-card:hover::before {
             opacity: 1;
         }
 
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .feature-card h3 {
-            margin-bottom: 0.5rem;
-            color: var(--light);
-        }
-
-        .feature-card p {
-            color: #94a3b8;
-            line-height: 1.6;
-        }
-
-        /* 交互演示区 */
-        .interactive-section {
-            margin: 4rem 0;
-            padding: 3rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .interactive-section h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .demo-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
         }
 
-        .demo-item:hover {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: var(--primary);
-            transform: scale(1.05);
+        /* 交互式演示区 */
+        .demo-section {
+            padding: 5rem 2rem;
+            background: var(--bg-card);
         }
 
-        .demo-item.active {
-            background: rgba(99, 102, 241, 0.3);
-            border-color: var(--primary);
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .demo-item h4 {
-            margin-bottom: 0.5rem;
+        .chat-interface {
+            background: var(--bg-dark);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
         }
 
-        .demo-item p {
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-
-        /* 表单区域 */
-        .form-section {
-            margin: 4rem 0;
-            padding: 3rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .form-section h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #cbd5e1;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.5);
             border-radius: 10px;
-            color: var(--light);
-            font-size: 1rem;
-            transition: all 0.3s;
+            margin-bottom: 1rem;
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            animation: messageSlide 0.3s ease;
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .form-actions {
+        .user-message {
+            background: var(--primary-color);
+            text-align: right;
+            margin-left: 20%;
+        }
+
+        .ai-message {
+            background: var(--border-color);
+            margin-right: 20%;
+        }
+
+        .chat-input {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
         }
 
-        .btn-secondary {
-            padding: 0.8rem 2rem;
-            background: transparent;
-            color: var(--light);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--light);
-        }
-
-        /* 动态图表 */
-        .chart-section {
-            margin: 4rem 0;
-            padding: 3rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .chart-section h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .chart-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 300px;
-        }
-
-        .chart {
-            width: 100%;
-            max-width: 500px;
-            height: 300px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            gap: 10px;
-            padding: 20px;
-        }
-
-        .chart-bar {
+        .chat-input input {
             flex: 1;
-            background: linear-gradient(to top, var(--primary), var(--secondary));
-            border-radius: 10px 10px 0 0;
-            position: relative;
-            transition: height 0.8s ease-out;
-            min-height: 20px;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            transition: border-color 0.3s ease;
         }
 
-        .chart-bar:hover {
-            background: linear-gradient(to top, var(--accent), var(--secondary));
-            transform: translateY(-5px);
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
 
-        .chart-bar span {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.8rem;
-            color: #94a3b8;
+        .chat-input button {
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        /* 动态文字效果 */
-        .text-animation {
+        .chat-input button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 性能监控仪表盘 */
+        .dashboard {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 15px;
             text-align: center;
-            margin: 4rem 0;
-            padding: 3rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
         }
 
-        .text-animation h2 {
-            font-size: 2rem;
-            margin-bottom: 2rem;
+        .stat-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
         }
 
-        .typing-text {
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* 响应式设计 */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
             font-size: 1.5rem;
-            color: var(--primary);
-            min-height: 2rem;
-            display: inline-block;
-            border-right: 2px solid var(--primary);
-            animation: blink 1s infinite;
+            cursor: pointer;
         }
 
-        @keyframes blink {
-            0%, 50% { border-color: var(--primary); }
-            51%, 100% { border-color: transparent; }
+        /* 加载动画 */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-links {
-                position: fixed;
-                top: 70px;
-                left: -100%;
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
                 width: 100%;
-                height: calc(100vh - 70px);
-                background: rgba(15, 23, 42, 0.98);
+                background: var(--bg-dark);
                 flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 2rem;
-                transition: left 0.3s;
-                backdrop-filter: blur(20px);
+                padding: 1rem;
+                border-top: 1px solid var(--border-color);
             }
 
             .nav-links.active {
-                left: 0;
+                display: flex;
             }
 
-            .menu-toggle {
+            .mobile-menu-toggle {
                 display: block;
             }
 
@@ -476,24 +453,43 @@
                 font-size: 2rem;
             }
 
-            .features {
+            .feature-grid {
                 grid-template-columns: 1fr;
             }
 
-            .demo-grid {
-                grid-template-columns: 1fr;
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .form-actions {
-                flex-direction: column;
+            .chat-interface {
+                padding: 1rem;
             }
 
-            .chart {
+            .chat-messages {
                 height: 200px;
             }
         }
 
-        /* 动画 */
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* 动画效果 */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -506,602 +502,134 @@
         }
 
         .fade-in {
-            animation: fadeInUp 0.8s ease-out forwards;
+            animation: fadeInUp 0.6s ease forwards;
         }
 
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--dark);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary);
-        }
-
-        /* 加载动画 */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s;
-        }
-
-        .loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loader-circle {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(99, 102, 241, 0.3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* 通知提示 */
-        .notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            transform: translateX(400px);
-            transition: transform 0.3s;
-            z-index: 1001;
-            max-width: 300px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .notification.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        /* 代码高亮 */
-        .code-block {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1rem 0;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .code-block .keyword { color: #c792ea; }
-        .code-block .string { color: #c3e88d; }
-        .code-block .comment { color: #676e95; }
-        .code-block .function { color: #82aaff; }
-
-        /* 页脚 */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
-            border-top: 1px solid var(--glass-border);
-            color: #94a3b8;
-        }
-
-        .footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        /* 悬浮按钮 */
-        .floating-btn {
+        /* 主题切换按钮 */
+        .theme-toggle {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary-color);
+            border: none;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
-            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
             z-index: 999;
         }
 
-        .floating-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
         }
 
-        /* 进度条 */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 1rem 0;
+        /* 响应式字体大小 */
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-value {
+                font-size: 2.5rem;
+            }
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            width: 0%;
-            transition: width 0.5s ease-out;
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            .feature-card:hover {
+                transform: none;
+            }
+            
+            .stat-card:hover {
+                transform: none;
+            }
+            
+            .cta-button:hover {
+                transform: none;
+            }
         }
 
-        /* 3D卡片效果 */
-        .card-3d {
-            perspective: 1000px;
-            margin: 2rem 0;
+        /* 减少动画偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
-        .card-3d-inner {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-        }
-
-        .card-3d:hover .card-3d-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-3d-front,
-        .card-3d-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .card-3d-front {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-        }
-
-        .card-3d-back {
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            transform: rotateY(180deg);
+        /* 高对比度模式 */
+        @media (prefers-contrast: high) {
+            :root {
+                --bg-dark: #000;
+                --bg-card: #111;
+                --text-primary: #fff;
+                --text-secondary: #ccc;
+                --border-color: #fff;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 加载动画 -->
-    <div class="loader" id="loader">
-        <div class="loader-circle"></div>
-    </div>
-
-    <!-- 动态背景 -->
-    <div class="bg-animation"></div>
-
     <!-- 导航栏 -->
-    <nav class="navbar">
+    <nav id="navbar">
         <div class="nav-container">
-            <div class="logo">MiMo</div>
+            <div class="logo">AI Assistant</div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#features">特性</a></li>
-                <li><a href="#interactive">交互</a></li>
-                <li><a href="#form">表单</a></li>
-                <li><a href="#charts">图表</a></li>
+                <li><a href="#home">首页</a></li>
+                <li><a href="#features">功能</a></li>
+                <li><a href="#demo">演示</a></li>
+                <li><a href="#stats">统计</a></li>
+                <li><a href="#contact">联系我们</a></li>
             </ul>
-            <button class="menu-toggle" id="menuToggle">☰</button>
         </div>
     </nav>
 
-    <!-- 主容器 -->
-    <div class="container">
-        <!-- 英雄区域 -->
-        <section class="hero fade-in">
-            <h1>MiMo 极致网页展示</h1>
-            <p>一个展示现代Web技术的极致网页，融合了响应式设计、交互动画、动态图表等多种技术</p>
-            <button class="cta-button" onclick="showNotification('欢迎来到MiMo的世界！', 'success')">
-                探索更多
-            </button>
+    <!-- 主要内容 -->
+    <main>
+        <!-- Hero 区域 -->
+        <section class="hero" id="home">
+            <div class="particles" id="particles"></div>
+            <div class="hero-content">
+                <h1>欢迎来到 AI 助手</h1>
+                <p>体验下一代智能交互，让 AI 成为您的得力伙伴</p>
+                <a href="#demo" class="cta-button">立即体验</a>
+            </div>
         </section>
 
-        <!-- 特性卡片 -->
-        <section id="features" class="fade-in">
-            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">核心特性</h2>
-            <div class="features">
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>极致设计</h3>
-                    <p>采用现代UI设计，玻璃拟态效果，渐变色彩，打造视觉盛宴</p>
+        <!-- 功能展示 -->
+        <section class="features" id="features">
+            <h2 class="section-title">核心功能</h2>
+            <div class="feature-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🧠</div>
+                    <h3>智能对话</h3>
+                    <p>基于深度学习的自然语言处理，理解您的每一个需求</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">⚡</div>
-                    <h3>高性能</h3>
-                    <p>优化的CSS和JavaScript，流畅的动画效果，极致的用户体验</p>
+                    <h3>极速响应</h3>
+                    <p>毫秒级响应速度，让交流如丝般顺滑</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>响应式</h3>
-                    <p>完美适配电脑、平板、手机等各种设备，无缝切换</p>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🔒</div>
+                    <h3>隐私保护</h3>
+                    <p>端到端加密，确保您的数据安全无忧</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎮</div>
-                    <h3>丰富交互</h3>
-                    <p>多种交互效果，包括悬停、点击、拖拽等，让网页活起来</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>动态图表</h3>
-                    <p>使用CSS动画实现的动态数据可视化，无需第三方库</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">✨</div>
-                    <h3>动画效果</h3>
-                    <p>流畅的过渡动画，滚动触发，提升用户参与感</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 交互演示区 -->
-        <section id="interactive" class="interactive-section fade-in">
-            <h2>交互演示</h2>
-            <div class="demo-grid">
-                <div class="demo-item" onclick="toggleDemo(this, '点击效果')">
-                    <h4>点击效果</h4>
-                    <p>点击体验不同的反馈</p>
-                </div>
-                <div class="demo-item" onclick="toggleDemo(this, '悬停动画')">
-                    <h4>悬停动画</h4>
-                    <p>鼠标悬停查看效果</p>
-                </div>
-                <div class="demo-item" onclick="toggleDemo(this, '拖拽体验')">
-                    <h4>拖拽体验</h4>
-                    <p>尝试拖拽这个卡片</p>
-                </div>
-                <div class="demo-item" onclick="toggleDemo(this, '键盘交互')">
-                    <h4>键盘交互</h4>
-                    <p>按Tab键体验焦点</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 表单区域 -->
-        <section id="form" class="form-section fade-in">
-            <h2>交互式表单</h2>
-            <form id="demoForm">
-                <div class="form-group">
-                    <label for="name">姓名</label>
-                    <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">邮箱</label>
-                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="category">选择类别</label>
-                    <select id="category" name="category">
-                        <option value="">请选择...</option>
-                        <option value="tech">技术咨询</option>
-                        <option value="business">商务合作</option>
-                        <option value="support">技术支持</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="message">留言内容</label>
-                    <textarea id="message" name="message" placeholder="请输入您的留言..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>进度展示</label>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="cta-button">提交表单</button>
-                    <button type="button" class="btn-secondary" onclick="resetForm()">重置</button>
-                </div>
-            </form>
-        </section>
-
-        <!-- 3D卡片 -->
-        <section class="fade-in">
-            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">3D翻转效果</h2>
-            <div class="card-3d">
-                <div class="card-3d-inner">
-                    <div class="card-3d-front">MiMo</div>
-                    <div class="card-3d-back">极致体验</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 动态图表 -->
-        <section id="charts" class="chart-section fade-in">
-            <h2>动态数据图表</h2>
-            <div class="chart-container">
-                <div class="chart" id="chart">
-                    <div class="chart-bar" style="height: 40%"><span>Q1</span></div>
-                    <div class="chart-bar" style="height: 70%"><span>Q2</span></div>
-                    <div class="chart-bar" style="height: 55%"><span>Q3</span></div>
-                    <div class="chart-bar" style="height: 85%"><span>Q4</span></div>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 1rem;">
-                <button class="cta-button" onclick="updateChart()">更新数据</button>
-            </div>
-        </section>
-
-        <!-- 动态文字 -->
-        <section class="text-animation fade-in">
-            <h2>动态文字效果</h2>
-            <div>
-                <span class="typing-text" id="typingText"></span>
-            </div>
-            <button class="cta-button" onclick="startTyping()" style="margin-top: 1rem;">播放文字</button>
-        </section>
-
-        <!-- 代码展示 -->
-        <section class="fade-in" style="margin: 4rem 0;">
-            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">代码示例</h2>
-            <div class="code-block">
-                <span class="comment">// MiMo - 极致网页展示代码</span><br>
-                <span class="keyword">const</span> <span class="function">animate</span> = () => {<br>
-                &nbsp;&nbsp;<span class="keyword">const</span> elements = document.<span class="function">querySelectorAll</span>(<span class="string">'.fade-in'</span>);<br>
-                &nbsp;&nbsp;elements.<span class="function">forEach</span>(el => {<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> rect = el.<span class="function">getBoundingClientRect</span>();<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (rect.top < window.innerHeight) {<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;el.<span class="function">classList</span>.<span class="function">add</span>(<span class="string">'visible'</span>);<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
-                &nbsp;&nbsp;});<br>
-                };
-            </div>
-        </section>
-
-        <!-- 页脚 -->
-        <footer class="footer fade-in">
-            <p>© 2024 MiMo - 极致网页展示 | 由 <a href="#" onclick="showNotification('MiMo - 您的智能助手', 'success')">MiMo</a> 精心打造</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">使用纯HTML、CSS、JavaScript实现</p>
-        </footer>
-    </div>
-
-    <!-- 悬浮按钮 -->
-    <div class="floating-btn" onclick="scrollToTop()" title="返回顶部">↑</div>
-
-    <!-- 通知提示 -->
-    <div class="notification" id="notification"></div>
-
-    <script>
-        // 页面加载完成
-        document.addEventListener('DOMContentLoaded', function() {
-            // 模拟加载
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 1000);
-
-            // 滚动动画
-            window.addEventListener('scroll', animateOnScroll);
-            animateOnScroll(); // 初始检查
-
-            // 导航菜单切换
-            document.getElementById('menuToggle').addEventListener('click', function() {
-                document.getElementById('navLinks').classList.toggle('active');
-            });
-
-            // 平滑滚动
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        // 关闭移动端菜单
-                        document.getElementById('navLinks').classList.remove('active');
-                    }
-                });
-            });
-
-            // 表单提交
-            document.getElementById('demoForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                simulateProgress();
-            });
-
-            // 拖拽功能
-            initDragAndDrop();
-
-            // 键盘导航
-            initKeyboardNav();
-        });
-
-        // 滚动触发动画
-        function animateOnScroll() {
-            const elements = document.querySelectorAll('.fade-in');
-            elements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 100) {
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                }
-            });
-        }
-
-        // 交互演示
-        function toggleDemo(element, message) {
-            // 移除所有active类
-            document.querySelectorAll('.demo-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            // 添加active类到当前元素
-            element.classList.add('active');
-            showNotification(`您选择了：${message}`, 'success');
-        }
-
-        // 表单进度模拟
-        function simulateProgress() {
-            const progressFill = document.getElementById('progressFill');
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                progressFill.style.width = progress + '%';
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    showNotification('表单提交成功！', 'success');
-                    setTimeout(() => {
-                        resetForm();
-                    }, 1500);
-                }
-            }, 200);
-        }
-
-        // 重置表单
-        function resetForm() {
-            document.getElementById('demoForm').reset();
-            document.getElementById('progressFill').style.width = '0%';
-            showNotification('表单已重置', 'success');
-        }
-
-        // 更新图表
-        function updateChart() {
-            const bars = document.querySelectorAll('.chart-bar');
-            bars.forEach(bar => {
-                const newHeight = Math.floor(Math.random() * 80) + 20;
-                bar.style.height = newHeight + '%';
-            });
-            showNotification('图表数据已更新', 'success');
-        }
-
-        // 打字机效果
-        function startTyping() {
-            const text = "MiMo - 您的智能助手，为您带来极致的网页体验！";
-            const element = document.getElementById('typingText');
-            element.textContent = '';
-            
-            let index = 0;
-            const interval = setInterval(() => {
-                if (index < text.length) {
-                    element.textContent += text.charAt(index);
-                    index++;
-                } else {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        element.textContent = '';
-                        startTyping();
-                    }, 2000);
-                }
-            }, 100);
-        }
-
-        // 通知提示
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // 返回顶部
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            showNotification('已返回顶部', 'success');
-        }
-
-        // 拖拽功能
-        function initDragAndDrop() {
-            const demoItems = document.querySelectorAll('.demo-item');
-            demoItems.forEach(item => {
-                let isDragging = false;
-                let startX, startY, initialX, initialY;
-
-                item.addEventListener('mousedown', (e) => {
-                    if (item.textContent.includes('拖拽')) {
-                        isDragging = true;
-                        startX = e.clientX;
-                        startY = e.clientY;
-                        initialX = item.offsetLeft;
-                        initialY = item.offsetTop;
-                        item.style.position = 'relative';
-                        item.style.zIndex = '1000';
-                    }
-                });
-
-                document.addEventListener('mousemove', (e) => {
-                    if (isDragging) {
-                        const dx = e.clientX - startX;
-                        const dy = e.clientY - startY;
-                        item.style.left = initialX + dx + 'px';
-                        item.style.top = initialY + dy + 'px';
-                    }
-                });
-
-                document.addEventListener('mouseup', () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        item.style.position = '';
-                        item.style.left = '';
-                        item.style.top = '';
-                        item.style.zIndex = '';
-                        showNotification('拖拽完成', 'success');
-                    }
-                });
-            });
-        }
-
-        // 键盘导航
-        function initKeyboardNav() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    document.getElementById('navLinks').classList.remove('active');
-                }
-                if (e.key === 'Home') {
-                    e.preventDefault();
-                    scrollToTop();
-                }
-            });
-        }
-
-        // 响应式调整
-        function handleResize() {
-            if (window.innerWidth > 768) {
-                document.getElementById('navLinks').classList.remove('active');
-            }
-        }
-
-        window.addEventListener('resize', handleResize);
-    </script>
-</body>
-  </html>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🌍</div>
+                    <h
