@@ -1,209 +1,116 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>倒计时示例</title>
-  <style>
-    /* 基本样式：居中、大字、数字块样式 */
-    html,body{
-      height:100%;
-      margin:0;
-      background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-      color:#fff;
-    }
-    .wrap{
-      min-height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      box-sizing:border-box;
-    }
-    .card{
-      background: rgba(255,255,255,0.06);
-      padding:28px;
-      border-radius:12px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-      text-align:center;
-      max-width:920px;
-      width:100%;
-    }
-    h1{ margin:0 0 12px; font-size:22px; letter-spacing:0.6px;}
-    p.subtitle{ margin:0 0 18px; color:rgba(255,255,255,0.75); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFINITE DESCENT</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            perspective: 1000px;
+            cursor: none;
+        }
 
-    .timer{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:12px;
-    }
-    .unit{
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      padding:18px 22px;
-      border-radius:8px;
-      min-width:110px;
-      box-shadow: inset 0 -4px 8px rgba(0,0,0,0.12);
-    }
-    .number{
-      font-weight:700;
-      font-size:36px;
-      line-height:1;
-      letter-spacing:1px;
-    }
-    .label{
-      margin-top:6px;
-      font-size:13px;
-      color:rgba(255,255,255,0.8);
-    }
+        #noise {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOCIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiLz48L3N2Zz4=');
+            opacity: 0.1;
+            z-index: -1;
+        }
 
-    .expired{
-      margin-top:16px;
-      font-size:18px;
-      color:#ffcccb;
-      font-weight:600;
-    }
+        #container {
+            transform-style: preserve-3d;
+            animation: rotate 60s linear infinite;
+        }
 
-    /* 响应式：在窄屏时缩小单元格宽度 */
-    @media (max-width:520px){
-      .unit{ min-width:72px; padding:12px 10px; }
-      .number{ font-size:22px; }
-      .label{ font-size:11px; }
-    }
+        .text {
+            position: absolute;
+            font-size: 1.5rem;
+            white-space: pre;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
 
-    /* 数字等宽样式，便于对齐 */
-    .number, .label { font-variant-numeric: tabular-nums; }
-  </style>
+        @keyframes rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        #cursor {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: difference;
+        }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card" role="main" aria-live="polite">
-      <h1>随机剩余时间倒计时</h1>
-      <p class="subtitle">每次刷新页面会随机生成一个剩余时间。倒计时到达零时将显示“已到期”。</p>
-
-      <div class="timer" id="timer">
-        <div class="unit">
-          <div class="number" id="years">00</div>
-          <div class="label">年</div>
-        </div>
-        <div class="unit">
-          <div class="number" id="days">00</div>
-          <div class="label">月/日</div>
-        </div>
-        <div class="unit">
-          <div class="number" id="hours">00</div>
-          <div class="label">时</div>
-        </div>
-        <div class="unit">
-          <div class="number" id="minutes">00</div>
-          <div class="label">分</div>
-        </div>
-        <div class="unit">
-          <div class="number" id="seconds">00</div>
-          <div class="label">秒</div>
-        </div>
-      </div>
-
-      <div id="status" class="expired" style="display:none;">已到期</div>
-      <div style="margin-top:14px; font-size:13px; color:rgba(255,255,255,0.7);">
-        随机规则示例：0-3年，0-364天，0-23小时，0-59分，0-59秒
-      </div>
+    <div id="noise"></div>
+    <div id="container">
+        <!-- Text layers will be added dynamically -->
     </div>
-  </div>
+    <div id="cursor"></div>
 
-  <script>
-    (function(){
-      // 随机生成剩余时间各单元
-      function randInt(min, max){
-        return Math.floor(Math.random()*(max-min+1))+min;
-      }
+    <script>
+        const texts = [
+            "YOU SHOULD NOT HAVE COME HERE.",
+            "THERE IS NO ESCAPE.",
+            "THE DOOR WAS NEVER LOCKED.",
+            "YOU LET THIS HAPPEN.",
+            "LOOK BEHIND YOU.",
+            "IT'S TOO LATE NOW.",
+            "YOU ARE ALREADY DEAD.",
+            "THIS IS NOT A DREAM.",
+            "THE WALLS ARE CLOSING IN.",
+            "YOU HEAR THEM WHISPERING.",
+            "THEY KNOW YOUR NAME.",
+            "YOU WILL NEVER WAKE UP."
+        ];
 
-      // 随机规则：年0-3, 天0-364, 时0-23, 分0-59, 秒0-59
-      var years = randInt(0,3);
-      var days  = randInt(0,364);
-      var hours = randInt(0,23);
-      var mins  = randInt(0,59);
-      var secs  = randInt(0,59);
+        const container = document.getElementById('container');
+        const cursor = document.getElementById('cursor');
 
-      // 将这些转成总秒数（不精确到闰年等，仅按 1 年 = 365 天）
-      var totalSeconds = secs + mins*60 + hours*3600 + days*86400 + years*365*86400;
+        // Create text layers in 3D space
+        texts.forEach((text, i) => {
+            const div = document.createElement('div');
+            div.className = 'text';
+            div.textContent = text;
+            div.style.animationDelay = `${i * 2}s`;
+            div.style.transform = `translateZ(${i * 50 - 300}px) rotateY(${i * 30}deg)`;
+            container.appendChild(div);
+        });
 
-      // 如果随机到0（极小概率），强制最小为5秒以便展示倒计时
-      if (totalSeconds === 0) totalSeconds = 5;
+        // Mouse cursor effect
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = `${e.clientX}px`;
+            cursor.style.top = `${e.clientY}px`;
+        });
 
-      var elYears = document.getElementById('years');
-      var elDays  = document.getElementById('days');
-      var elHours = document.getElementById('hours');
-      var elMins  = document.getElementById('minutes');
-      var elSecs  = document.getElementById('seconds');
-      var elStatus = document.getElementById('status');
-
-      function pad(n, width){
-        var s = String(n);
-        while(s.length < width) s = '0' + s;
-        return s;
-      }
-
-      // 将总秒数分解并显示
-      function updateDisplay(t){
-        if (t <= 0){
-          elYears.textContent = '00';
-          elDays.textContent  = '00';
-          elHours.textContent = '00';
-          elMins.textContent  = '00';
-          elSecs.textContent  = '00';
-          elStatus.style.display = 'block';
-          return;
-        } else {
-          elStatus.style.display = 'none';
-        }
-
-        var seconds = t % 60;
-        var minutes = Math.floor(t / 60) % 60;
-        var hours   = Math.floor(t / 3600) % 24;
-        var daysAll = Math.floor(t / 86400);
-        var years  = Math.floor(daysAll / 365);
-        var days   = daysAll % 365;
-
-        elYears.textContent = pad(years, 2);
-        // 为了保持“年月日时分秒”的显示，我把天数显示为月/日位（即-days），如果你想显示真实月份可以改逻辑。
-        elDays.textContent = pad(days, 3); // 天数可能超过两位，显示三位以便区分
-        elHours.textContent = pad(hours, 2);
-        elMins.textContent = pad(minutes, 2);
-        elSecs.textContent = pad(seconds, 2);
-      }
-
-      // 以绝对时间为基准的倒计时（避免页面切换导致计时偏移）
-      var endTime = Date.now() + totalSeconds * 1000;
-
-      // 首次渲染
-      updateDisplay(Math.ceil((endTime - Date.now())/1000));
-
-      // 每秒更新（使用 setInterval，并在可见性变化时校准）
-      var timerId = setInterval(function(){
-        var remain = Math.ceil((endTime - Date.now())/1000);
-        if (remain <= 0){
-          clearInterval(timerId);
-          updateDisplay(0);
-        } else {
-          updateDisplay(remain);
-        }
-      }, 250); // 250ms 以更平滑并及时响应（不会错过整秒）
-
-      // 当页面从隐藏变为显示时，立即校准显示
-      document.addEventListener('visibilitychange', function(){
-        if (!document.hidden){
-          var remain = Math.ceil((endTime - Date.now())/1000);
-          if (remain <= 0){
-            clearInterval(timerId);
-            updateDisplay(0);
-          } else {
-            updateDisplay(remain);
-          }
-        }
-      });
-    })();
-  </script>
+        // Random glitches
+        setInterval(() => {
+            document.body.style.background = `radial-gradient(circle at ${Math.random() * 100}% ${Math.random() * 100}%, #000 0%, #111 100%)`;
+        }, 5000);
+    </script>
 </body>
-</html>
+      </html>
