@@ -1,146 +1,1107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>〈破界〉</title>
-  <style>
-    /* 强制全屏 */
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: #000;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      cursor: none; /* 隐藏鼠标 */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiMo - 极致网页展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* 闪烁文字 */
-    .glitch {
-      animation: glitch 0.3s infinite alternate;
-      font-size: 3rem;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    @keyframes glitch {
-      0% { opacity: 0.2; text-shadow: 0 0 10px #f00; }
-      50% { opacity: 1; text-shadow: 0 0 20px #0f0; }
-      100% { opacity: 0.2; text-shadow: 0 0 30px #00f; }
-    }
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
 
-    /* 噪声背景 */
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    /* 扭曲布局 */
-    .distort {
-      transform: skew(20deg) rotate(5deg);
-      filter: blur(1px) contrast(200%);
-      position: absolute;
-      top: 20%;
-      left: 10%;
-      font-size: 1.5rem;
-    }
-  </style>
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 移动端菜单按钮 */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 2rem 2rem;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        /* 特性卡片 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* 交互演示区 */
+        .interactive-section {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .interactive-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .demo-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .demo-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .demo-item.active {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: var(--primary);
+        }
+
+        .demo-item h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-item p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        /* 表单区域 */
+        .form-section {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--light);
+        }
+
+        /* 动态图表 */
+        .chart-section {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .chart {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            transition: height 0.8s ease-out;
+            min-height: 20px;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(to top, var(--accent), var(--secondary));
+            transform: translateY(-5px);
+        }
+
+        .chart-bar span {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        /* 动态文字效果 */
+        .text-animation {
+            text-align: center;
+            margin: 4rem 0;
+            padding: 3rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .text-animation h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .typing-text {
+            font-size: 1.5rem;
+            color: var(--primary);
+            min-height: 2rem;
+            display: inline-block;
+            border-right: 2px solid var(--primary);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: var(--primary); }
+            51%, 100% { border-color: transparent; }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(15, 23, 42, 0.98);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+                transition: left 0.3s;
+                backdrop-filter: blur(20px);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .chart {
+                height: 200px;
+            }
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-circle {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 通知提示 */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        /* 代码高亮 */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code-block .keyword { color: #c792ea; }
+        .code-block .string { color: #c3e88d; }
+        .code-block .comment { color: #676e95; }
+        .code-block .function { color: #82aaff; }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--glass-border);
+            color: #94a3b8;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* 悬浮按钮 */
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        /* 3D卡片效果 */
+        .card-3d {
+            perspective: 1000px;
+            margin: 2rem 0;
+        }
+
+        .card-3d-inner {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-3d:hover .card-3d-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-3d-front,
+        .card-3d-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .card-3d-front {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .card-3d-back {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            transform: rotateY(180deg);
+        }
+    </style>
 </head>
 <body>
-  <!-- 警告 -->
-  <div style="position: fixed; top: 10px; left: 10px; font-size: 0.8rem;">
-    ⚠️ 警告：本页面包含闪烁效果、强烈噪声和心理压力元素。<br>
-    请在良好光线下使用，如有不适请立即关闭。
-  </div>
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-circle"></div>
+    </div>
 
-  <!-- 闪烁文字 -->
-  <div class="glitch">你无法逃脱</div>
+    <!-- 动态背景 -->
+    <div class="bg-animation"></div>
 
-  <!-- 噪声背景 -->
-  <canvas id="noise"></canvas>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">MiMo</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">特性</a></li>
+                <li><a href="#interactive">交互</a></li>
+                <li><a href="#form">表单</a></li>
+                <li><a href="#charts">图表</a></li>
+            </ul>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+    </nav>
 
-  <!-- 扭曲文本 -->
-  <div class="distort">
-    系统正在扫描你的大脑...<br>
-    发现异常记忆：[REDACTED]<br>
-    处理进度：99%<br>
-    <span id="progress">■■■■■■■□□□</span>
-  </div>
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero fade-in">
+            <h1>MiMo 极致网页展示</h1>
+            <p>一个展示现代Web技术的极致网页，融合了响应式设计、交互动画、动态图表等多种技术</p>
+            <button class="cta-button" onclick="showNotification('欢迎来到MiMo的世界！', 'success')">
+                探索更多
+            </button>
+        </section>
 
-  <!-- 鼠标劫持 -->
-  <div id="mouse-trap" style="position: fixed; width: 10px; height: 10px; background: red; border-radius: 50%; pointer-events: none;"></div>
+        <!-- 特性卡片 -->
+        <section id="features" class="fade-in">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">核心特性</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>极致设计</h3>
+                    <p>采用现代UI设计，玻璃拟态效果，渐变色彩，打造视觉盛宴</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>高性能</h3>
+                    <p>优化的CSS和JavaScript，流畅的动画效果，极致的用户体验</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>响应式</h3>
+                    <p>完美适配电脑、平板、手机等各种设备，无缝切换</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>丰富交互</h3>
+                    <p>多种交互效果，包括悬停、点击、拖拽等，让网页活起来</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>动态图表</h3>
+                    <p>使用CSS动画实现的动态数据可视化，无需第三方库</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>动画效果</h3>
+                    <p>流畅的过渡动画，滚动触发，提升用户参与感</p>
+                </div>
+            </div>
+        </section>
 
-  <!-- 语音合成 -->
-  <script>
-    // 强制全屏
-    document.documentElement.requestFullscreen().catch(err => {
-      console.log("Fullscreen error:", err);
-    });
+        <!-- 交互演示区 -->
+        <section id="interactive" class="interactive-section fade-in">
+            <h2>交互演示</h2>
+            <div class="demo-grid">
+                <div class="demo-item" onclick="toggleDemo(this, '点击效果')">
+                    <h4>点击效果</h4>
+                    <p>点击体验不同的反馈</p>
+                </div>
+                <div class="demo-item" onclick="toggleDemo(this, '悬停动画')">
+                    <h4>悬停动画</h4>
+                    <p>鼠标悬停查看效果</p>
+                </div>
+                <div class="demo-item" onclick="toggleDemo(this, '拖拽体验')">
+                    <h4>拖拽体验</h4>
+                    <p>尝试拖拽这个卡片</p>
+                </div>
+                <div class="demo-item" onclick="toggleDemo(this, '键盘交互')">
+                    <h4>键盘交互</h4>
+                    <p>按Tab键体验焦点</p>
+                </div>
+            </div>
+        </section>
 
-    // 噪声背景
-    const canvas = document.getElementById('noise');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+        <!-- 表单区域 -->
+        <section id="form" class="form-section fade-in">
+            <h2>交互式表单</h2>
+            <form id="demoForm">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">选择类别</label>
+                    <select id="category" name="category">
+                        <option value="">请选择...</option>
+                        <option value="tech">技术咨询</option>
+                        <option value="business">商务合作</option>
+                        <option value="support">技术支持</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">留言内容</label>
+                    <textarea id="message" name="message" placeholder="请输入您的留言..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>进度展示</label>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="cta-button">提交表单</button>
+                    <button type="button" class="btn-secondary" onclick="resetForm()">重置</button>
+                </div>
+            </form>
+        </section>
 
-    function drawNoise() {
-      const imageData = ctx.createImageData(canvas.width, canvas.height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const val = Math.random() * 255;
-        data[i] = val;     // R
-        data[i + 1] = val; // G
-        data[i + 2] = val; // B
-        data[i + 3] = 255; // A
-      }
-      ctx.putImageData(imageData, 0, 0);
-      requestAnimationFrame(drawNoise);
-    }
-    drawNoise();
+        <!-- 3D卡片 -->
+        <section class="fade-in">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">3D翻转效果</h2>
+            <div class="card-3d">
+                <div class="card-3d-inner">
+                    <div class="card-3d-front">MiMo</div>
+                    <div class="card-3d-back">极致体验</div>
+                </div>
+            </div>
+        </section>
 
-    // 闪烁文字
-    setInterval(() => {
-      document.querySelector('.glitch').textContent =
-        ["你逃不掉", "这是你的命运", "系统已锁定", "放弃抵抗"][Math.floor(Math.random() * 4)];
-    }, 500);
+        <!-- 动态图表 -->
+        <section id="charts" class="chart-section fade-in">
+            <h2>动态数据图表</h2>
+            <div class="chart-container">
+                <div class="chart" id="chart">
+                    <div class="chart-bar" style="height: 40%"><span>Q1</span></div>
+                    <div class="chart-bar" style="height: 70%"><span>Q2</span></div>
+                    <div class="chart-bar" style="height: 55%"><span>Q3</span></div>
+                    <div class="chart-bar" style="height: 85%"><span>Q4</span></div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="cta-button" onclick="updateChart()">更新数据</button>
+            </div>
+        </section>
 
-    // 鼠标劫持
-    document.addEventListener('mousemove', (e) => {
-      const trap = document.getElementById('mouse-trap');
-      trap.style.left = (e.clientX + Math.random() * 50 - 25) + 'px';
-      trap.style.top = (e.clientY + Math.random() * 50 - 25) + 'px';
-    });
+        <!-- 动态文字 -->
+        <section class="text-animation fade-in">
+            <h2>动态文字效果</h2>
+            <div>
+                <span class="typing-text" id="typingText"></span>
+            </div>
+            <button class="cta-button" onclick="startTyping()" style="margin-top: 1rem;">播放文字</button>
+        </section>
 
-    // 语音合成
-    const utterances = [
-      "你已经被标记",
-      "没有退路",
-      "这是你的选择",
-      "系统正在重启"
-    ];
-    setInterval(() => {
-      const utterance = new SpeechSynthesisUtterance(utterances[Math.floor(Math.random() * utterances.length)]);
-      utterance.rate = 0.8;
-      speechSynthesis.speak(utterance);
-    }, 3000);
+        <!-- 代码展示 -->
+        <section class="fade-in" style="margin: 4rem 0;">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">代码示例</h2>
+            <div class="code-block">
+                <span class="comment">// MiMo - 极致网页展示代码</span><br>
+                <span class="keyword">const</span> <span class="function">animate</span> = () => {<br>
+                &nbsp;&nbsp;<span class="keyword">const</span> elements = document.<span class="function">querySelectorAll</span>(<span class="string">'.fade-in'</span>);<br>
+                &nbsp;&nbsp;elements.<span class="function">forEach</span>(el => {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span> rect = el.<span class="function">getBoundingClientRect</span>();<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (rect.top < window.innerHeight) {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;el.<span class="function">classList</span>.<span class="function">add</span>(<span class="string">'visible'</span>);<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;});<br>
+                };
+            </div>
+        </section>
 
-    // 进度条
-    let progress = 0;
-    setInterval(() => {
-      progress += 1;
-      if (progress > 10) progress = 0;
-      document.getElementById('progress').textContent =
-        '■'.repeat(progress) + '□'.repeat(10 - progress);
-    }, 1000);
+        <!-- 页脚 -->
+        <footer class="footer fade-in">
+            <p>© 2024 MiMo - 极致网页展示 | 由 <a href="#" onclick="showNotification('MiMo - 您的智能助手', 'success')">MiMo</a> 精心打造</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">使用纯HTML、CSS、JavaScript实现</p>
+        </footer>
+    </div>
 
-    // 强制滚动
-    setInterval(() => {
-      window.scrollTo(0, window.scrollY + 1);
-    }, 50);
-  </script>
+    <!-- 悬浮按钮 -->
+    <div class="floating-btn" onclick="scrollToTop()" title="返回顶部">↑</div>
+
+    <!-- 通知提示 -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟加载
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+
+            // 滚动动画
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // 初始检查
+
+            // 导航菜单切换
+            document.getElementById('menuToggle').addEventListener('click', function() {
+                document.getElementById('navLinks').classList.toggle('active');
+            });
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // 关闭移动端菜单
+                        document.getElementById('navLinks').classList.remove('active');
+                    }
+                });
+            });
+
+            // 表单提交
+            document.getElementById('demoForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                simulateProgress();
+            });
+
+            // 拖拽功能
+            initDragAndDrop();
+
+            // 键盘导航
+            initKeyboardNav();
+        });
+
+        // 滚动触发动画
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // 交互演示
+        function toggleDemo(element, message) {
+            // 移除所有active类
+            document.querySelectorAll('.demo-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // 添加active类到当前元素
+            element.classList.add('active');
+            showNotification(`您选择了：${message}`, 'success');
+        }
+
+        // 表单进度模拟
+        function simulateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showNotification('表单提交成功！', 'success');
+                    setTimeout(() => {
+                        resetForm();
+                    }, 1500);
+                }
+            }, 200);
+        }
+
+        // 重置表单
+        function resetForm() {
+            document.getElementById('demoForm').reset();
+            document.getElementById('progressFill').style.width = '0%';
+            showNotification('表单已重置', 'success');
+        }
+
+        // 更新图表
+        function updateChart() {
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach(bar => {
+                const newHeight = Math.floor(Math.random() * 80) + 20;
+                bar.style.height = newHeight + '%';
+            });
+            showNotification('图表数据已更新', 'success');
+        }
+
+        // 打字机效果
+        function startTyping() {
+            const text = "MiMo - 您的智能助手，为您带来极致的网页体验！";
+            const element = document.getElementById('typingText');
+            element.textContent = '';
+            
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < text.length) {
+                    element.textContent += text.charAt(index);
+                    index++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        element.textContent = '';
+                        startTyping();
+                    }, 2000);
+                }
+            }, 100);
+        }
+
+        // 通知提示
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showNotification('已返回顶部', 'success');
+        }
+
+        // 拖拽功能
+        function initDragAndDrop() {
+            const demoItems = document.querySelectorAll('.demo-item');
+            demoItems.forEach(item => {
+                let isDragging = false;
+                let startX, startY, initialX, initialY;
+
+                item.addEventListener('mousedown', (e) => {
+                    if (item.textContent.includes('拖拽')) {
+                        isDragging = true;
+                        startX = e.clientX;
+                        startY = e.clientY;
+                        initialX = item.offsetLeft;
+                        initialY = item.offsetTop;
+                        item.style.position = 'relative';
+                        item.style.zIndex = '1000';
+                    }
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (isDragging) {
+                        const dx = e.clientX - startX;
+                        const dy = e.clientY - startY;
+                        item.style.left = initialX + dx + 'px';
+                        item.style.top = initialY + dy + 'px';
+                    }
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        item.style.position = '';
+                        item.style.left = '';
+                        item.style.top = '';
+                        item.style.zIndex = '';
+                        showNotification('拖拽完成', 'success');
+                    }
+                });
+            });
+        }
+
+        // 键盘导航
+        function initKeyboardNav() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.getElementById('navLinks').classList.remove('active');
+                }
+                if (e.key === 'Home') {
+                    e.preventDefault();
+                    scrollToTop();
+                }
+            });
+        }
+
+        // 响应式调整
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                document.getElementById('navLinks').classList.remove('active');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+    </script>
 </body>
-    </html>
+  </html>
