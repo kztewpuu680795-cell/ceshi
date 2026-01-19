@@ -1,202 +1,142 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>极精密·时序魔法阵</title>
-    <style>
-        :root {
-            --bg-color: #050508;
-            --magic-gold: rgba(255, 215, 100, 0.8);
-            --magic-cyan: rgba(0, 255, 255, 0.6);
-            --glow: 0 0 15px rgba(255, 215, 100, 0.4);
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: serif;
-        }
-
-        #magic-container {
-            position: relative;
-            width: 95vmin;
-            height: 95vmin;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 8px rgba(255, 180, 0, 0.3));
-        }
-
-        /* 旋转逻辑控制 */
-        .layer {
-            transform-origin: center;
-            transition: transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44);
-        }
-
-        .reverse {
-            animation-direction: reverse;
-        }
-
-        /* 装饰性文字 */
-        .runes {
-            font-size: 12px;
-            fill: var(--magic-gold);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* 背景装饰 */
-        .ambient-glow {
-            position: absolute;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(100, 60, 20, 0.2) 0%, transparent 70%);
-            pointer-events: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>极致魔法阵 – 秒针节奏旋转</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    /* 基础页面布局 */
+    html,body{
+        margin:0; padding:0;
+        width:100%; height:100%;
+        background:#0a001f;               /* 深邃星空背景 */
+        overflow:hidden;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-family:system-ui, sans-serif;
+    }
+    /* 让 SVG 自动适配大小 */
+    #magic-circle{
+        width:90vmin;               /* 视口的 90%（在手机上也很大） */
+        height:auto;
+        transform-origin:center;
+    }
+    /* 为了让光晕更柔和，给 SVG 加点滤镜 */
+    .glow{
+        filter: drop-shadow(0 0 8px #00ffea) drop-shadow(0 0 16px #00ffea);
+    }
+</style>
 </head>
 <body>
 
-<div class="ambient-glow"></div>
-<div id="magic-container">
-    <svg id="magic-circle" viewBox="0 0 800 800">
-        <!-- 定义渐变和滤镜 -->
-        <defs>
-            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffd764;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1" />
-            </linearGradient>
-        </defs>
+<!-- -------------------------------------------------
+     这里是魔法阵本体（SVG）
+     ------------------------------------------------- -->
+<svg id="magic-circle" class="glow" viewBox="-500 -500 1000 1000"
+     xmlns="http://www.w3.org/2000/svg">
 
-        <!-- 基础圆环组 -->
-        <g id="layers-container">
-            <!-- 自动生成层级将注入此处 -->
+    <!-- 1️⃣ 最外层星形环（12 角星） -->
+    <polygon points="
+        0,-460   45,-425   110,-440   80,-380   130,-340
+        70,-340   45,-280   20,-340   -40,-340   -15,-280
+        -75,-340   -125,-300   -95,-380   -165,-360   -130,-425
+        -195,-440   -130,-460   -165,-525   -95,-540   -125,-610
+        -75,-570   -40,-630   -15,-570   45,-570   20,-630
+        70,-630   130,-590   80,-650   110,-710   45,-725
+        0,-690   -45,-725   -110,-710   -80,-650   -130,-590
+        -70,-630   -40,-570   -15,-630   15,-570   75,-570
+        125,-610   95,-540   165,-560   130,-495   195,-480
+        130,-460   165,-395   95,-380   125,-300   75,-340
+        40,-280   15,-340   -45,-340   -20,-280   -70,-340
+        -130,-300   -80,-360   -110,-400   -45,-425"
+        fill="none" stroke="#00ffea" stroke-width="4"/>
+
+    <!-- 2️⃣ 三层同心圆 -->
+    <circle cx="0" cy="0" r="380" stroke="#7fffd4" stroke-width="3" fill="none"/>
+    <circle cx="0" cy="0" r="260" stroke="#7fffd4" stroke-width="3" fill="none"/>
+    <circle cx="0" cy="0" r="140" stroke="#7fffd4" stroke-width="3" fill="none"/>
+
+    <!-- 3️⃣ 放射线（24 条） -->
+    <g stroke="#00ffea" stroke-width="2">
+        <line x1="0" y1="-380" x2="0" y2="-460"/>
+        <line x1="0" y1="380"  x2="0" y2="460"/>
+        <line x1="-380" y1="0" x2="-460" y2="0"/>
+        <line x1="380"  y1="0" x2="460"  y2="0"/>
+        <!-- 对角线 -->
+        <line x1="-269" y1="-269" x2="-330" y2="-330"/>
+        <line x1="269"  y1="269"  x2="330"  y2="330"/>
+        <line x1="-269" y1="269"  x2="-330" y2="330"/>
+        <line x1="269"  y1="-269" x2="330"  y2="-330"/>
+        <!-- 其余 16 条（每 15°） -->
+        <g id="radial-lines">
+            <line x1="0" y1="-380" x2="0" y2="-460"/>
         </g>
-    </svg>
-</div>
+    </g>
+
+    <!-- 4️⃣ 八卦（阴阳鱼） -->
+    <g transform="scale(0.6) translate(-300,-300)">
+        <path d="M0,0 a120,120 0 1,0 0.1,0" fill="none" stroke="#ff00ff" stroke-width="3"/>
+        <circle cx="0" cy="-60" r="30" fill="#ff00ff"/>
+        <circle cx="0" cy="60"  r="30" fill="#0a001f"/>
+        <circle cx="0" cy="-60" r="10" fill="#0a001f"/>
+        <circle cx="0" cy="60"  r="10" fill="#ff00ff"/>
+    </g>
+
+    <!-- 5️⃣ 随机符文（用路径手绘） -->
+    <g fill="#00ffea">
+        <!-- 这里放 8 个不同的符文，形状随意，可自行替换 -->
+        <path d="M-200,-200 h30 v10 h-20 v20 h20 v10 h-30 z"/>
+        <path d="M150,-180 q20,0 20,20 t-20,20 h-30 v-10 h30 q10,0 10,-10 t-10,-10 h-30 v-10 z"/>
+        <path d="M-120,150 l15,-30 l15,30 h-10 l-5,-10 l-5,10 z"/>
+        <path d="M200,120 c0,-15 20,-15 20,0 v30 h-10 v-30 c0,-5 -10,-5 -10,0 v30 h-10 z"/>
+        <path d="M-250,0 a40,40 0 0,1 80,0 a40,40 0 0,1 -80,0"/>
+        <path d="M0,250 v-30 h10 v30 h-10"/>
+        <path d="M-80,-250 q40,0 40,40 t-40,40 h-20 v-10 h20 q20,0 20,-30 t-20,-30 h-20 z"/>
+        <path d="M250,-80 q0,40 -40,40 h-30 v-10 h30 q20,0 20,-30 t-20,-30 h-30 v-10 z"/>
+    </g>
+
+    <!-- 6️⃣ 中心核心（发光圆） -->
+    <circle cx="0" cy="0" r="30" fill="#ff00ff"/>
+    <circle cx="0" cy="0" r="15" fill="#0a001f"/>
+
+</svg>
 
 <script>
-    const container = document.getElementById('layers-container');
-
-    // 辅助函数：创建SVG元素
-    function createSVG(tag, attrs) {
-        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-        for (let k in attrs) el.setAttribute(k, attrs[k]);
-        return el;
+/* -------------------------------------------------
+   1️⃣ 让放射线均匀分布（每 15° 生成 24 条）
+   ------------------------------------------------- */
+(function(){
+    const g = document.querySelector('#radial-lines');
+    for(let i=0;i<24;i++){
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        const angle = i*15 * Math.PI/180;
+        const r1 = 380, r2 = 460;
+        line.setAttribute('x1', r1*Math.cos(angle));
+        line.setAttribute('y1', r1*Math.sin(angle));
+        line.setAttribute('x2', r2*Math.cos(angle));
+        line.setAttribute('y2', r2*Math.sin(angle));
+        line.setAttribute('stroke','#00ffea');
+        line.setAttribute('stroke-width','2');
+        g.appendChild(line);
     }
+})();
 
-    // 绘制多边形/星形
-    function getSteinerPoints(radius, sides, offset = 0) {
-        let points = [];
-        for (let i = 0; i < sides; i++) {
-            let angle = (i * 360 / sides + offset) * Math.PI / 180;
-            points.push(`${400 + radius * Math.cos(angle)},${400 + radius * Math.sin(angle)}`);
-        }
-        return points.join(' ');
-    }
+/* -------------------------------------------------
+   2️⃣ 旋转动画：与真实秒针同步
+   ------------------------------------------------- */
+const svg = document.getElementById('magic-circle');
 
-    // 初始化魔法阵结构
-    function initMagicCircle() {
-        // 1. 最外层：时钟刻度环
-        const outerRing = createSVG('g', { class: 'layer', id: 'layer-outer' });
-        outerRing.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 380, fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '2' }));
-        outerRing.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 370, fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '1', 'stroke-dasharray': '2,4' }));
-        
-        // 添加刻度
-        for(let i=0; i<60; i++) {
-            let r1 = i % 5 === 0 ? 370 : 375;
-            let strokeW = i % 5 === 0 ? 2 : 0.5;
-            let angle = i * 6 * Math.PI / 180;
-            outerRing.appendChild(createSVG('line', {
-                x1: 400 + 380 * Math.cos(angle), y1: 400 + 380 * Math.sin(angle),
-                x2: 400 + r1 * Math.cos(angle), y2: 400 + r1 * Math.sin(angle),
-                stroke: 'var(--magic-gold)', 'stroke-width': strokeW
-            }));
-        }
-        container.appendChild(outerRing);
-
-        // 2. 中层：几何共振层 (六角星与内接圆)
-        const midLayer = createSVG('g', { class: 'layer', id: 'layer-mid' });
-        midLayer.appendChild(createSVG('polygon', { 
-            points: getSteinerPoints(300, 6), fill: 'none', stroke: 'var(--magic-cyan)', 'stroke-width': '1' 
-        }));
-        midLayer.appendChild(createSVG('polygon', { 
-            points: getSteinerPoints(300, 6, 30), fill: 'none', stroke: 'var(--magic-cyan)', 'stroke-width': '1' 
-        }));
-        midLayer.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 260, fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '4', 'stroke-dasharray': '20,10,5,10' }));
-        container.appendChild(midLayer);
-
-        // 3. 符文层 (模拟文字)
-        const runeLayer = createSVG('g', { class: 'layer', id: 'layer-runes' });
-        const runeText = "ELPHEGOR • ASTAROTH • METATRON • LUCIFER • ADONAI • ELOHE • ZEBAOTH • ";
-        const pathId = "runePath";
-        runeLayer.appendChild(createSVG('path', { 
-            id: pathId, d: "M 400,180 A 220,220 0 1,1 399.9,180", fill: 'none'
-        }));
-        const textNode = createSVG('text', { class: 'runes' });
-        const textPath = createSVG('textPath', { 'href': '#' + pathId });
-        textPath.textContent = runeText.repeat(3);
-        textNode.appendChild(textPath);
-        runeLayer.appendChild(textNode);
-        container.appendChild(runeLayer);
-
-        // 4. 核心层：极其复杂的碎形
-        const coreLayer = createSVG('g', { class: 'layer', id: 'layer-core' });
-        for(let i=0; i<12; i++) {
-            coreLayer.appendChild(createSVG('ellipse', {
-                cx: 400, cy: 400, rx: 150, ry: 40, 
-                transform: `rotate(${i*30} 400 400)`,
-                fill: 'none', stroke: 'var(--magic-gold)', 'stroke-width': '0.5'
-            }));
-        }
-        coreLayer.appendChild(createSVG('circle', { cx: 400, cy: 400, r: 50, fill: 'none', stroke: 'var(--magic-cyan)', 'stroke-width': '2' }));
-        coreLayer.appendChild(createSVG('polygon', { points: getSteinerPoints(50, 3), fill: 'var(--magic-gold)' }));
-        container.appendChild(coreLayer);
-    }
-
-    // 动画驱动：同步时间
-    function update() {
-        const now = new Date();
-        const ms = now.getMilliseconds();
-        const sec = now.getSeconds() + ms / 1000;
-        const min = now.getMinutes() + sec / 60;
-        const hr = now.getHours() + min / 60;
-
-        // 秒针角度 (每秒6度)
-        const secAngle = sec * 6;
-        
-        // 各层差异化旋转
-        // 最外层同步秒针
-        document.getElementById('layer-outer').style.transform = `rotate(${secAngle}deg)`;
-        
-        // 中层反向缓慢旋转
-        document.getElementById('layer-mid').style.transform = `rotate(${-secAngle * 0.5}deg)`;
-        
-        // 符文层顺向极慢旋转
-        document.getElementById('layer-runes').style.transform = `rotate(${min * 6}deg)`;
-        
-        // 核心层高频微动
-        document.getElementById('layer-core').style.transform = `rotate(${secAngle * 2}deg)`;
-
-        requestAnimationFrame(update);
-    }
-
-    initMagicCircle();
-    update();
+function animate(){
+    const now = new Date();
+    const ms = now.getMilliseconds();
+    const s = now.getSeconds() + ms/1000;      // 带小数的秒数
+    const deg = s * 6;                         // 每秒 6°
+    svg.style.transform = `rotate(${deg}deg)`;
+    requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
 </script>
 
 </body>
-                </html>
+    </html>
